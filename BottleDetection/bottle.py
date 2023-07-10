@@ -8,9 +8,10 @@ execution_path = os.getcwd()
 cam = cv2.VideoCapture(0)
 
 if not cam.isOpened():
+    print('cam is not opening')
     exit()
  
-cnt = 0
+cnt = -1
 
 #divide frame to form a relation btw distance irl and in img
 def markupY(frame, section):
@@ -33,29 +34,47 @@ def markupX(frame, section):
          cv2.line(frame, (xTemp,yUp), (xTemp, y), (0,0,255), 2)
 
 #calculate distance and angle based on found formula
-def distance(frame,object):
+def distance1(frame,object):
     endY = frame.shape[0]
     midX = int(frame.shape[1]//2)
     difX = midX - (object["box_points"][0] + object["box_points"][2])//2
     difY = endY - (object["box_points"][1] + object["box_points"][3])//2
     #formula
-    distanceY = 2*(int(difY/endY)*4+1)
-    distanceX = 2*(int(difX/midX)*4+1)
+    distanceY = (142.902*(math.e**(2.512*int(difY/endY)))+467.015)/10
     if difX == 0:
-         absAngle = 90
-    else: absAngle = math.atan(distanceY/distanceX)*180 / math.pi
-    hypoDistance = (distanceY**2 + distanceX**2)**0.5
-    return (absAngle, hypoDistance)
-
+         absAngle = 0
+    else: absAngle = math.atan(difY/difX)
+    distance = distanceY/math.cos(absAngle)
+    return math.degrees(absAngle), distance
     
+#calculate distance using focal length
+def distance2(object):
+    bottleLen = max(abs(object["box_points"][0] - object["box_points"][2]), abs(object["box_points"][1] - object["box_points"][3]))
+    realLen = 250
+    focalLen = 1465
+    distance = focalLen*realLen/bottleLen
+    return distance/10
+
+def centered(frame,object):
+    angle = distance1(frame,object)[0]
+    if angle < 0: 
+        return 'Turn left'
+    elif angle > 0:
+        return 'Turn right'
+    else: 
+        return 'Centered'
+
 
 while True:
-    ret, frame = cam.read()
     cnt += 1
+    ret, frame = cam.read()
+    # frame = cv2.flip(frame, 0)
+    # frame = cv2.flip(frame, 1)
+    dim = (int(frame.shape[1]*70/100), int(frame.shape[0]*70/100))
+    frame = cv2.resize(frame, dim)
+    markupX(frame, 8)
+    markupY(frame, 8)
     if (cnt%30==0):
-        dim = (int(frame.shape[1]*70/100), int(frame.shape[0]*70/100))
-        frame = cv2.resize(frame, dim)
-
         detector = ObjectDetection()
         detector.setModelTypeAsYOLOv3()
         detector.setModelPath(os.path.join(execution_path , "Bottle Detection\yolov3.pt"))
@@ -67,7 +86,7 @@ while True:
 
         for eachObject in detections:
             if eachObject['name']=='bottle':
-                print ('Object {} cm away at an angle of {} degrees'.format(distance(frame,eachObject)[1], distance(frame,eachObject)[0]))
+                print ('Object {} cm away at an angle of {} degrees'.format(distance1(frame,eachObject)[1], distance1(frame,eachObject)[0]))
                 print('Bottle detected with probability: {}%'.format(eachObject["percentage_probability"]))
                 # print(eachObject["name"] , " : ", eachObject["percentage_probability"], " : ", eachObject["box_points"] )
                 print("--------------------------------")
