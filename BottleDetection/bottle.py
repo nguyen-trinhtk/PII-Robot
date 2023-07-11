@@ -2,8 +2,11 @@ from imageai.Detection import ObjectDetection
 import os
 import cv2
 import math 
+import keyboard, serial
+
 
 execution_path = os.getcwd()
+# ser = serial.Serial(port='COM13', baudrate=9600, timeout=.1)
 
 cam = cv2.VideoCapture(0)
 
@@ -45,7 +48,7 @@ def distance1(frame,object):
          absAngle = 0
     else: absAngle = math.atan(difY/difX)
     distance = distanceY/math.cos(absAngle)
-    return math.degrees(absAngle), distance
+    return int(math.degrees(absAngle)), int(distance)
     
 #calculate distance using focal length
 def distance2(object):
@@ -61,10 +64,10 @@ def position(frame,object):
     if (abs(angle)<=1):
         print('centered')
         return '8'
-    elif angle < 0: 
+    elif angle > 0: 
         print('turn left')
         return '4' #turn left
-    elif angle > 0:
+    elif angle < 0:
         print('turn right')
         return '6'
     
@@ -88,10 +91,10 @@ while True:
     frame = cv2.resize(frame, dim)
     # markupX(frame, 8)
     # markupY(frame, 8)
-    if (cnt%1==0):
+    if (cnt%2==0):
         detector = ObjectDetection()
         detector.setModelTypeAsYOLOv3()
-        detector.setModelPath(os.path.join(execution_path , "BottleDetection\yolov3.pt"))
+        detector.setModelPath(os.path.join(execution_path , "BottleDetection/models/bottle.pt"))
         detector.loadModel()
         detections = detector.detectObjectsFromImage(input_image=frame, 
                                                     minimum_percentage_probability=30,
@@ -100,10 +103,9 @@ while True:
 
         for eachObject in detections:
             if eachObject['name']=='bottle':
-                # print ('Object {} cm away at an angle of {} degrees'.format(distance1(frame,eachObject)[1], distance1(frame,eachObject)[0]))
-                position(frame, eachObject)
+                print ('Object {} cm away at an angle of {} degrees'.format(distance1(frame,eachObject)[1], distance1(frame,eachObject)[0]))
+                position(frame,eachObject)
                 print('Bottle detected with probability: {}%'.format(eachObject["percentage_probability"]))
-                # print(eachObject["name"] , " : ", eachObject["percentage_probability"], " : ", eachObject["box_points"] )
                 print("--------------------------------")
                 
                 start_point = [eachObject["box_points"][0], eachObject["box_points"][1]]
