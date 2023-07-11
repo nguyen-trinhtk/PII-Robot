@@ -6,7 +6,7 @@ import serial
 
 
 execution_path = os.getcwd()
-# ser = serial.Serial(port='COM13', baudrate=9600, timeout=.1)
+ser = serial.Serial(port='COM13', baudrate=9600, timeout=.1)
 
 cam = cv2.VideoCapture(0)
 
@@ -37,7 +37,7 @@ def markupX(frame, section):
          cv2.line(frame, (xTemp,yUp), (xTemp, y), (0,0,255), 2)
 
 #calculate distance and angle based on found formula
-def distance1(frame,object):
+def distance(frame,object):
     endY = frame.shape[0]
     midX = int(frame.shape[1]//2)
     difX = midX - (object["box_points"][0] + object["box_points"][2])//2
@@ -49,21 +49,13 @@ def distance1(frame,object):
     else: absAngle = math.atan(difX/difY)
     distance = distanceY/math.cos(absAngle)
     return int(math.degrees(absAngle)), int(distance)
-    
-#calculate distance using focal length
-def distance2(object):
-    bottleLen = max(abs(object["box_points"][0] - object["box_points"][2]), abs(object["box_points"][1] - object["box_points"][3]))
-    realLen = 215
-    focalLen = 1465
-    distance = focalLen*realLen/bottleLen
-    return distance
 
 def position(frame,object):
-    angle = distance1(frame,object)[0]
-    #if object is on the left-hand side
+    angle = distance(frame,object)[0]
     if (abs(angle)<=5):
         print('centered')
         return '8'
+    #if object is on the left-hand side
     elif angle > 0: 
         print('turn left')
         return '4' #turn left
@@ -71,18 +63,25 @@ def position(frame,object):
         print('turn right')
         return '6'
     
-# def center(object):
-#     adjust = True
-#     while (adjust == True):
-#         ret, frame = cam.read()
-#         dim = (int(frame.shape[1]*70/100), int(frame.shape[0]*70/100))
-#         frame = cv2.resize(frame, dim)
-#         msg = position(frame, object)
-#         if (msg == '8'):
-#             adjust = False
-#         else:
-#             ser.write(b'{}'.format(msg))
-#     return True
+def center(object):
+    adjust = True
+    while (adjust == True):
+        frame = cam.read()
+        msg = position(frame, object)
+        if (msg == '8'):
+            adjust = False
+        else:
+            ser.write(b'{}'.format(msg))
+
+def runTo(object):
+    adjust = True
+    while (adjust == True):
+        frame = cam.read()
+        distance = distance(frame, object)[1]
+        if (distance > 410):
+            ser.write(b'8')
+        else:
+            ser.write(b'5')
 
 while True:
     cnt += 1
@@ -103,19 +102,16 @@ while True:
 
         for eachObject in detections:
             if eachObject['name']=='bottle':
-                print ('Object {} mm away at an angle of {} degrees'.format(distance1(frame,eachObject)[1], distance1(frame,eachObject)[0]))
+                print ('Object {} mm away at an angle of {} degrees'.format(distance(frame,eachObject)[1], distance(frame,eachObject)[0]))
                 position(frame,eachObject)
                 print('Bottle detected with probability: {}%'.format(eachObject["percentage_probability"]))
                 print("--------------------------------")
                 
-                start_point = [eachObject["box_points"][0], eachObject["box_points"][1]]
-                end_point = [eachObject["box_points"][2], eachObject["box_points"][3]]
-                
-                # Blue color in BGR
-                color = (255, 0, 0)
-                # Line thickness of 2 px
-                thickness = 2
-                frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
+                # start_point = [eachObject["box_points"][0], eachObject["box_points"][1]]
+                # end_point = [eachObject["box_points"][2], eachObject["box_points"][3]]
+                # color = (255, 0, 0)
+                # thickness = 2
+                # frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
                 
 
     if not ret:
