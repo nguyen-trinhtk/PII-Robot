@@ -55,29 +55,43 @@ def distance2(object):
     distance = focalLen*realLen/bottleLen
     return distance/10
 
-def centered(frame,object):
+def position(frame,object):
     angle = distance1(frame,object)[0]
-    if angle < 0: 
-        return 'Turn left'
+    #if object is on the left-hand side
+    if (abs(angle)<=1):
+        print('centered')
+        return '8'
+    elif angle < 0: 
+        print('turn left')
+        return '4' #turn left
     elif angle > 0:
-        return 'Turn right'
-    else: 
-        return 'Centered'
-
+        print('turn right')
+        return '6'
+    
+# def center(object):
+#     adjust = True
+#     while (adjust == True):
+#         ret, frame = cam.read()
+#         dim = (int(frame.shape[1]*70/100), int(frame.shape[0]*70/100))
+#         frame = cv2.resize(frame, dim)
+#         msg = position(frame, object)
+#         if (msg == '8'):
+#             adjust = False
+#         else:
+#             ser.write(b'{}'.format(msg))
+#     return True
 
 while True:
     cnt += 1
     ret, frame = cam.read()
-    # frame = cv2.flip(frame, 0)
-    # frame = cv2.flip(frame, 1)
     dim = (int(frame.shape[1]*70/100), int(frame.shape[0]*70/100))
     frame = cv2.resize(frame, dim)
-    markupX(frame, 8)
-    markupY(frame, 8)
-    if (cnt%30==0):
+    # markupX(frame, 8)
+    # markupY(frame, 8)
+    if (cnt%1==0):
         detector = ObjectDetection()
         detector.setModelTypeAsYOLOv3()
-        detector.setModelPath(os.path.join(execution_path , "Bottle Detection\yolov3.pt"))
+        detector.setModelPath(os.path.join(execution_path , "BottleDetection\yolov3.pt"))
         detector.loadModel()
         detections = detector.detectObjectsFromImage(input_image=frame, 
                                                     minimum_percentage_probability=30,
@@ -86,7 +100,8 @@ while True:
 
         for eachObject in detections:
             if eachObject['name']=='bottle':
-                print ('Object {} cm away at an angle of {} degrees'.format(distance1(frame,eachObject)[1], distance1(frame,eachObject)[0]))
+                # print ('Object {} cm away at an angle of {} degrees'.format(distance1(frame,eachObject)[1], distance1(frame,eachObject)[0]))
+                position(frame, eachObject)
                 print('Bottle detected with probability: {}%'.format(eachObject["percentage_probability"]))
                 # print(eachObject["name"] , " : ", eachObject["percentage_probability"], " : ", eachObject["box_points"] )
                 print("--------------------------------")
@@ -99,6 +114,7 @@ while True:
                 # Line thickness of 2 px
                 thickness = 2
                 frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
+                
 
     if not ret:
             break
