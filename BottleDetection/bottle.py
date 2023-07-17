@@ -19,9 +19,10 @@ def info(frame,object):
     endY = frame.shape[0]
     midX = int(frame.shape[1]//2)
     difX = midX - (object["box_points"][0] + object["box_points"][2])//2
-    difY = endY - max(object["box_points"][1],object["box_points"][3])
+    difY = endY - (object["box_points"][1] + object["box_points"][3])//2
+    dY = endY - max(object["box_points"][1],object["box_points"][3])
     #formula
-    distanceY = (142.902*(math.e**(2.512*(difY/endY)))-132.985+400)
+    distanceY = (142.902*(math.e**(2.512*(dY/endY)))-132.985+400)
     if difY == 0:
          absAngle = 0
     else: absAngle = math.atan(difX/difY)
@@ -45,10 +46,10 @@ def center(object):
         if (frc%30 == 0):
             ret, frame = cam.read()
             object = detect(frame)
-            if (object != None):
+            if (object):
                 cv2.imshow('frame', frame)
                 angle = info(frame,object)[0]
-                print('Angle: ' + str(angle))
+                print('Current angle: ' + str(angle))
                 if (abs(angle) <= 5):
                     print('centered')
                     adjust = False
@@ -62,10 +63,8 @@ def center(object):
                     print('far left')
             else:
                 print('Object out of frame')
-    print ('Object {} mm away at an angle of {} degrees'.format(info(frame,object)[1], info(frame,object)[0]))
-    print('Bottle detected with probability: {}%'.format(object["percentage_probability"]))
+    print ('Bottle {} mm away, centered'.format(info(frame,object)[1], info(frame,object)[0]))
     print("--------------------------------")
-
 
 detector = ObjectDetection()
 detector.setModelTypeAsYOLOv3()
@@ -78,10 +77,11 @@ while True:
     if (cnt%30==0):
         object = detect(frame)
         if object:
-            print ('Object {} mm away at an angle of {} degrees'.format(info(frame,object)[1], info(frame,object)[0]))
+            print('Bottle detected with probability: {}%'.format(object["percentage_probability"]))
+            print('Bottle {} mm away at an angle of {} degrees'.format(info(frame,object)[1], info(frame,object)[0]))
             center(object)
         else:
-            print('Not found, scan next')
+            print('No bottle found')
     if not ret:
             break
 
