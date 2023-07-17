@@ -1,6 +1,6 @@
 import keyboard,serial
 
-ser = serial.Serial(port='COM13', baudrate=9600, timeout=.1)
+ser = serial.Serial(port='COM8', baudrate=9600, timeout=.1)
 while True:
     if keyboard.is_pressed('up arrow') or keyboard.is_pressed('w'):
         ser.write(b'8')
