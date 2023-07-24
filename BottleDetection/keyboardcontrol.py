@@ -1,16 +1,27 @@
-import keyboard,serial
-
+import keyboard
+import serial
 ser = serial.Serial(port='COM8', baudrate=9600, timeout=.1)
+ignore_keypress = False
+def on_press(event):
+    global ignore_keypress
+    if not ignore_keypress:
+        if event.name == 'up':
+            ser.write(b'8')
+        elif event.name == 'down':
+            ser.write(b'2')
+        elif event.name == 'left':
+            ser.write(b'4')
+        elif event.name == 'right':
+            ser.write(b'6')
+def on_release(event):
+    if not ignore_keypress:
+        ser.write(b'0')
+keyboard.on_press(on_press)
+keyboard.on_release(on_release)
 while True:
-    if keyboard.is_pressed('up arrow') or keyboard.is_pressed('w'):
-        print('8')
-    elif keyboard.is_pressed("down arrow") or keyboard.is_pressed('s'):
-        print('2')
-    elif keyboard.is_pressed("right arrow") or keyboard.is_pressed('d'):
-        print('6')
-    elif keyboard.is_pressed("left arrow") or keyboard.is_pressed('a'):
-        print('4')
-    while True:
-        data = ser.readline().decode().strip()
-        if (data.lower()=='done executing'):
-            break
+    if ser.in_waiting:
+        message = ser.readline().decode().strip()
+        if message == 'Done executing':
+            ignore_keypress = False
+        else:
+            ignore_keypress = True
