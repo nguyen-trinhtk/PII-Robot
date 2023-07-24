@@ -44,7 +44,6 @@ def center(frame):
     # 2: bw 4: tl 6: tr 8: fw 0: stop
     # r: object out of frame (slowly turn around)
     # n: no object found, cont going
-    # d: done executing
 
     frc = 0
     while True:

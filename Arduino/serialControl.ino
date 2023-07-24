@@ -6,8 +6,8 @@
 #define IN_2 8
 #define IN_3 9
 #define IN_4 10
-#define maxSpeed 208
-#define minSpeed 70
+// #define maxSpeed 208
+// #define minSpeed 70
 
 
 void setup() {
@@ -49,6 +49,7 @@ void startEngine(){
 }
 
 void forward(float second){
+  startEngine();
   digitalWrite(IN1_PIN, HIGH);
   digitalWrite(IN2_PIN, LOW);
   digitalWrite(IN3_PIN, LOW);
@@ -58,6 +59,7 @@ void forward(float second){
 }
 
 void backward(float second){
+  startEngine();
   digitalWrite(IN1_PIN, LOW);
   digitalWrite(IN2_PIN, HIGH);
   digitalWrite(IN3_PIN, HIGH);
@@ -67,6 +69,7 @@ void backward(float second){
 }
 
 void rotateLeft(float second){
+  startEngine();
   digitalWrite(IN1_PIN, LOW);
   digitalWrite(IN2_PIN, HIGH);
   digitalWrite(IN3_PIN, LOW);
@@ -76,6 +79,7 @@ void rotateLeft(float second){
   Serial.println("Done executing");
 }
 void rotateRight(float second){
+  startEngine();
   digitalWrite(IN1_PIN, HIGH);
   digitalWrite(IN2_PIN, LOW);
   digitalWrite(IN3_PIN, HIGH);
@@ -87,6 +91,7 @@ void rotateRight(float second){
 
 
 void loop() {
+   startEngine();
    if (Serial.available()){
     char msg = Serial.read();
     if (msg == '2'){
@@ -116,6 +121,9 @@ void loop() {
     }
     else if (msg == '9'){
       rotateRight(0.5);
+    }
+    else{
+      stop(0.2);
     }
   }
   else{

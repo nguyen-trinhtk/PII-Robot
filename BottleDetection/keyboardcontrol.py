@@ -21,7 +21,7 @@ keyboard.on_release(on_release)
 while True:
     if ser.in_waiting:
         message = ser.readline().decode().strip()
-        if message == 'Done executing':
+        if message.lower() == 'done executing':
             ignore_keypress = False
         else:
             ignore_keypress = True
