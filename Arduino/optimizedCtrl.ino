@@ -48,6 +48,53 @@ void startEngine(){
   digitalWrite(IN_4, HIGH);
 }
 
+void waitUntilRelease(){
+    while true{
+    if (Serial.available){
+        char msg = Serial.read();
+        if (msg == '0'){
+            break;
+        }
+    }
+  }
+  stop();
+}
+
+void forward(){
+  startEngine();
+  digitalWrite(IN1_PIN, HIGH);
+  digitalWrite(IN2_PIN, LOW);
+  digitalWrite(IN3_PIN, LOW);
+  digitalWrite(IN4_PIN, HIGH);
+  waitUntilRelease();
+}
+
+void backward(){
+  startEngine();
+  digitalWrite(IN1_PIN, LOW);
+  digitalWrite(IN2_PIN, HIGH);
+  digitalWrite(IN3_PIN, HIGH);
+  digitalWrite(IN4_PIN, LOW);
+  waitUntilRelease();
+}
+
+void rotateLeft(){
+  startEngine();
+  digitalWrite(IN1_PIN, LOW);
+  digitalWrite(IN2_PIN, HIGH);
+  digitalWrite(IN3_PIN, LOW);
+  digitalWrite(IN4_PIN, HIGH);
+  waitUntilRelease();
+}
+void rotateRight(){
+  startEngine();
+  digitalWrite(IN1_PIN, HIGH);
+  digitalWrite(IN2_PIN, LOW);
+  digitalWrite(IN3_PIN, HIGH);
+  digitalWrite(IN4_PIN, LOW);
+  waitUntilRelease();
+}
+
 void forward(float second){
   startEngine();
   digitalWrite(IN1_PIN, HIGH);
@@ -94,19 +141,20 @@ void loop() {
    startEngine();
    if (Serial.available()){
     char msg = Serial.read();
+    //manual control
     if (msg == '2'){
-      backward(0.3);
+      backward();
     }
     else if (msg == '4'){
-      rotateLeft(0.3);
+      rotateLeft();
     }
     else if (msg == '6'){
-      rotateRight(0.3);
+      rotateRight();
     }
     else if (msg == '8'){
-      forward(0.3);
+      forward();
     }
-
+    //automatic control
     else if (msg == '1'){
       rotateLeft(0.5);
     }

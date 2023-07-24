@@ -1,27 +1,29 @@
-import keyboard
 import serial
-ser = serial.Serial(port='COM8', baudrate=9600, timeout=.1)
-ignore_keypress = False
-def on_press(event):
-    global ignore_keypress
-    if not ignore_keypress:
-        if event.name == 'up':
-            ser.write(b'8')
-        elif event.name == 'down':
-            ser.write(b'2')
-        elif event.name == 'left':
-            ser.write(b'4')
-        elif event.name == 'right':
-            ser.write(b'6')
-def on_release(event):
-    if not ignore_keypress:
+from pynput import keyboard
+
+# Open the serial connection
+ser = serial.Serial('COM8', 9600)  # Replace 'COM0' with the appropriate serial port
+
+# Key press event handlers
+def on_key_press(key):
+    if key == keyboard.Key.down:
+        ser.write(b'2')
+    elif key == keyboard.Key.left:
+        ser.write(b'4')
+    elif key == keyboard.Key.right:
+        ser.write(b'6')
+    elif key == keyboard.Key.up:
+        ser.write(b'8')
+
+def on_key_release(key):
+    if key in [keyboard.Key.down, keyboard.Key.left, keyboard.Key.right, keyboard.Key.up]:
         ser.write(b'0')
-keyboard.on_press(on_press)
-keyboard.on_release(on_release)
-while True:
-    if ser.in_waiting:
-        message = ser.readline().decode().strip()
-        if message.lower() == 'done executing':
-            ignore_keypress = False
-        else:
-            ignore_keypress = True
+
+# Create listener
+listener = keyboard.Listener(on_press=on_key_press, on_release=on_key_release)
+
+# Start the listener
+listener.start()
+
+# Keep the program running until interrupted
+listener.join()
