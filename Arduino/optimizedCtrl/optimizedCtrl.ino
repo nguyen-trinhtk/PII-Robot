@@ -49,8 +49,8 @@ void startEngine(){
 }
 
 void waitUntilRelease(){
-    while true{
-    if (Serial.available){
+    while (true){
+    if (Serial.available()){
         char msg = Serial.read();
         if (msg == '0'){
             break;
