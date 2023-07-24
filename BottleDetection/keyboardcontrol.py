@@ -2,9 +2,10 @@ import serial
 from pynput import keyboard
 
 # Open the serial connection
-ser = serial.Serial('COM8', 9600)  # Replace 'COM0' with the appropriate serial port
+ser = serial.Serial('COM8', 9600)
 
 # Key press event handlers
+# When key is pressed and hold, Arduino action is executed
 def on_key_press(key):
     if key == keyboard.Key.down:
         ser.write(b'2')
@@ -15,15 +16,13 @@ def on_key_press(key):
     elif key == keyboard.Key.up:
         ser.write(b'8')
 
+# The action (forward, backward, left, right)
+# continues until key is release
 def on_key_release(key):
     if key in [keyboard.Key.down, keyboard.Key.left, keyboard.Key.right, keyboard.Key.up]:
         ser.write(b'0')
 
-# Create listener
+# Keep the program running
 listener = keyboard.Listener(on_press=on_key_press, on_release=on_key_release)
-
-# Start the listener
 listener.start()
-
-# Keep the program running until interrupted
 listener.join()

@@ -1,3 +1,0 @@
-FPS on Jetson Nano:
-- Normal:
-- Detecting
