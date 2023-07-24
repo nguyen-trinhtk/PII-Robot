@@ -3,8 +3,7 @@ import os
 import cv2
 import math
 import serial
-port = str(input('COM number?'))
-ser = serial.Serial(port='COM{}'.format(port), baudrate=9600, timeout=.1)
+ser = serial.Serial(port='COM8', baudrate=9600, timeout=.1)
 
  # Get the current working directory
 execution_path = os.getcwd()
@@ -14,6 +13,7 @@ cam = cv2.VideoCapture(0)
 if not cam.isOpened():
     ser.write('e')
     exit()
+
  # Initialize the object detector
 detector = ObjectDetection()
 detector.setModelTypeAsYOLOv3()
@@ -44,20 +44,22 @@ def center(frame):
     # 2: bw 4: tl 6: tr 8: fw 0: stop
     # r: object out of frame (slowly turn around)
     # n: no object found, cont going
-    # e: camera error
+    # d: done executing
+
     frc = 0
     while True:
+        ser.write(0)
         frc += 1
-        if (frc%15 == 0):
+        if (frc%60 == 0):
             ret, frame = cam.read()
             frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
             object = detect(frame)
             if (object):
-                cv2.imshow('frame', frame)
                 angle = info(frame,object)[0]
                 print('Current angle: ' + str(angle))
                 if (abs(angle) <= 10):
                     ser.write(b'5')
+                    return
                 elif (angle < -45):
                     ser.write(b'9')
                 elif (angle < 0):
@@ -67,19 +69,24 @@ def center(frame):
                 else:
                     ser.write(b'1')
             else:
-                ser.write(b'n')
+                ser.write(b'r')
+            while True:
+                data = ser.readline().decode().strip()
+                if (data.lower()=='done executing'):
+                    break
             if not ret:
                 break
     
-
 cnt = -1
 while True:
+    ser.write(0)
     cnt += 1
-    if (cnt%30==0):
+    if (cnt%60==0):
         ret, frame = cam.read()
         frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
         object = detect(frame)
         if object:
+            print('Bottle found')
             center(frame)
         else:
             ser.write(b'n')

@@ -14,7 +14,7 @@ if not cam.isOpened():
  # Initialize the object detector
 detector = ObjectDetection()
 detector.setModelTypeAsYOLOv3()
-detector.setModelPath(os.path.join(execution_path, "BottleDetection\models\yolov3.pt"))
+detector.setModelPath(os.path.join(execution_path, "BottleDetection/models/yolov3.pt"))
 detector.loadModel()
 def info(frame,object):
     """Calculate the angle and distance of the object from the frame."""
