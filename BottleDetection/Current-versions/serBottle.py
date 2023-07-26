@@ -14,7 +14,7 @@ if not cam.isOpened():
 # Initialize the object detector
 detector = ObjectDetection()
 detector.setModelTypeAsYOLOv3()
-detector.setModelPath(os.path.join(execution_path, "BottleDetection\models\yolov3.pt"))
+detector.setModelPath(os.path.join(execution_path, "BottleDetection\Current-versions\models\yolov3.pt"))
 detector.loadModel()
 def info(frame,object):
     endX = frame.shape[1]
@@ -75,12 +75,13 @@ def center(frame):
                 break
 def main():   
     cnt = -1
+    ret, frame = cam.read()
+    frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
     while True:
         ser.write(0)
         cnt += 1
         if (cnt%60==0):
-            ret, frame = cam.read()
-            frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+            
             object = detect(frame)
             if object:
                 print('Bottle found')
@@ -92,5 +93,6 @@ def main():
             break
         if cv2.waitKey(1)==ord('q'):
             break
+        cv2.imshow('frame', cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE))
     cam.release()
     cv2.destroyAllWindows()

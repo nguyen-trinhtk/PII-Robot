@@ -8,7 +8,8 @@
 #define IN_4 10
 // #define maxSpeed 208
 // #define minSpeed 70
-
+const int maxSpeed = 100;
+const int slowTurnSpeed = 50;
 
 void setup() {
   Serial.begin(9600);
@@ -42,10 +43,10 @@ void stop(float second){
 }
 
 void startEngine(){
-  digitalWrite(IN_1, HIGH);
+  analogWrite(IN_1, maxSpeed);
   digitalWrite(IN_2, LOW);
   digitalWrite(IN_3,LOW);
-  digitalWrite(IN_4, HIGH);
+  analogWrite(IN_4, maxSpeed);
 }
 
 void waitUntilRelease(){
@@ -62,18 +63,18 @@ void waitUntilRelease(){
 
 void forward(){
   startEngine();
-  digitalWrite(IN1_PIN, HIGH);
+  analogWrite(IN1_PIN, maxSpeed);
   digitalWrite(IN2_PIN, LOW);
   digitalWrite(IN3_PIN, LOW);
-  digitalWrite(IN4_PIN, HIGH);
+  analogWrite(IN4_PIN, maxSpeed);
   waitUntilRelease();
 }
 
 void backward(){
   startEngine();
   digitalWrite(IN1_PIN, LOW);
-  digitalWrite(IN2_PIN, HIGH);
-  digitalWrite(IN3_PIN, HIGH);
+  analogWrite(IN2_PIN, maxSpeed);
+  analogWrite(IN3_PIN, maxSpeed);
   digitalWrite(IN4_PIN, LOW);
   waitUntilRelease();
 }
@@ -81,26 +82,26 @@ void backward(){
 void rotateLeft(){
   startEngine();
   digitalWrite(IN1_PIN, LOW);
-  digitalWrite(IN2_PIN, HIGH);
+  analogWrite(IN2_PIN, maxSpeed);
   digitalWrite(IN3_PIN, LOW);
-  digitalWrite(IN4_PIN, HIGH);
+  analogWrite(IN4_PIN, maxSpeed);
   waitUntilRelease();
 }
 void rotateRight(){
   startEngine();
-  digitalWrite(IN1_PIN, HIGH);
+  analogWrite(IN1_PIN, maxSpeed);
   digitalWrite(IN2_PIN, LOW);
-  digitalWrite(IN3_PIN, HIGH);
+  analogWrite(IN3_PIN, maxSpeed);
   digitalWrite(IN4_PIN, LOW);
   waitUntilRelease();
 }
 
 void forward(float second){
   startEngine();
-  digitalWrite(IN1_PIN, HIGH);
+  analogWrite(IN1_PIN, maxSpeed);
   digitalWrite(IN2_PIN, LOW);
   digitalWrite(IN3_PIN, LOW);
-  digitalWrite(IN4_PIN, HIGH);
+  analogWrite(IN4_PIN, maxSpeed);
   delay(second*1000);
   Serial.println("Done executing");
 }
@@ -108,8 +109,8 @@ void forward(float second){
 void backward(float second){
   startEngine();
   digitalWrite(IN1_PIN, LOW);
-  digitalWrite(IN2_PIN, HIGH);
-  digitalWrite(IN3_PIN, HIGH);
+  analogWrite(IN2_PIN, maxSpeed);
+  analogWrite(IN3_PIN, maxSpeed);
   digitalWrite(IN4_PIN, LOW);
   delay(second*1000);
   Serial.println("Done executing");
@@ -118,18 +119,18 @@ void backward(float second){
 void rotateLeft(float second){
   startEngine();
   digitalWrite(IN1_PIN, LOW);
-  digitalWrite(IN2_PIN, HIGH);
+  analogWrite(IN2_PIN, maxSpeed);
   digitalWrite(IN3_PIN, LOW);
-  digitalWrite(IN4_PIN, HIGH);
+  analogWrite(IN4_PIN, maxSpeed);
   delay(second*1000);
   stop();
   Serial.println("Done executing");
 }
 void rotateRight(float second){
   startEngine();
-  digitalWrite(IN1_PIN, HIGH);
+  analogWrite(IN1_PIN, maxSpeed);
   digitalWrite(IN2_PIN, LOW);
-  digitalWrite(IN3_PIN, HIGH);
+  analogWrite(IN3_PIN, maxSpeed);
   digitalWrite(IN4_PIN, LOW);
   delay(second*1000);
   stop();
