@@ -34,6 +34,12 @@ def detect(frame):
                                                     display_object_name = True)
     return next((eachObject for eachObject in detections if eachObject['name']=='bottle'), None)
 
+def waitForExecution():
+    while True:
+                data = ser.readline().decode().strip()
+                if (data.lower()=='done executing'):
+                    break
+
 def center(frame):
     # 1: fl 3: nl 5: c 7: nr 9: fr
     # 2: bw 4: tl 6: tr 8: fw 0: stop
@@ -64,29 +70,27 @@ def center(frame):
                     ser.write(b'1')
             else:
                 ser.write(b'r')
-            while True:
-                data = ser.readline().decode().strip()
-                if (data.lower()=='done executing'):
-                    break
+            waitForExecution()
             if not ret:
                 break
-    
-cnt = -1
-while True:
-    ser.write(0)
-    cnt += 1
-    if (cnt%60==0):
-        ret, frame = cam.read()
-        frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
-        object = detect(frame)
-        if object:
-            print('Bottle found')
-            center(frame)
-        else:
-            ser.write(b'n')
-    if not ret:
-        break
-    if cv2.waitKey(1)==ord('q'):
-        break
-cam.release()
-cv2.destroyAllWindows()
+def main():   
+    cnt = -1
+    while True:
+        ser.write(0)
+        cnt += 1
+        if (cnt%60==0):
+            ret, frame = cam.read()
+            frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+            object = detect(frame)
+            if object:
+                print('Bottle found')
+                ser.write('bottle found')
+                center(frame)
+            else:
+                ser.write(b'n')
+        if not ret:
+            break
+        if cv2.waitKey(1)==ord('q'):
+            break
+    cam.release()
+    cv2.destroyAllWindows()

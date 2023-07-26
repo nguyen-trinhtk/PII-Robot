@@ -2,7 +2,7 @@ from imageai.Detection import ObjectDetection
 import os
 import cv2
 import math
-import time
+
  # Get the current working directory
 execution_path = os.getcwd()
  # Initialize the camera

@@ -136,13 +136,9 @@ void rotateRight(float second){
   Serial.println("Done executing");
 }
 
-
-void loop() {
-   startEngine();
-   if (Serial.available()){
-    char msg = Serial.read();
-    //manual control
-    if (msg == '2'){
+void caseChoose(char msg){
+  //manual keyboard control
+  if (msg == '2'){
       backward();
     }
     else if (msg == '4'){
@@ -154,7 +150,7 @@ void loop() {
     else if (msg == '8'){
       forward();
     }
-    //automatic control
+  //automatic bottle centering control
     else if (msg == '1'){
       rotateLeft(0.5);
     }
@@ -170,9 +166,23 @@ void loop() {
     else if (msg == '9'){
       rotateRight(0.5);
     }
-    else{
-      stop(0.2);
+  //random navigation
+    else if (msg == 'l'){
+      rotateLeft(0.3);
     }
+    else if (msg == 'r'){
+      rotateRight(0.3);
+    }
+    else if (msg == 'f'){
+      forward(1);
+    }
+}
+
+void loop() {
+   startEngine();
+   if (Serial.available()){
+    char msg = Serial.read();
+    caseChoose(msg);
   }
   else{
     stop(0.1);

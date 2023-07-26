@@ -81,11 +81,11 @@ while True:
             print('Bottle detected with probability: {}%'.format(object["percentage_probability"]))
             print('Bottle {} mm away at an angle of {} degrees'.format(info(frame,object)[1], info(frame,object)[0]))
             center()
-            start_point = [object["box_points"][0], object["box_points"][1]]
-            end_point = [object["box_points"][2], object["box_points"][3]]
-            color = (255, 0, 0)  # Blue color in BGR
-            thickness = 2  # Line thickness of 2 px
-            frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
+            # start_point = [object["box_points"][0], object["box_points"][1]]
+            # end_point = [object["box_points"][2], object["box_points"][3]]
+            # color = (255, 0, 0)  # Blue color in BGR
+            # thickness = 2  # Line thickness of 2 px
+            # frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
         else:
             print('No bottle found')
     if not ret:
