@@ -57,15 +57,15 @@ def center():
                     ser.write(b'centered\n')
                     return
                 elif (angle < -45):
-                    ser.write(b'far right\n')
+                    ser.write(b'farRight\n')
                 elif (angle < 0):
-                    ser.write(b'near right\n')
+                    ser.write(b'nearRight\n')
                 elif (angle < 45):
-                    ser.write(b'near left\n')
+                    ser.write(b'nearLeft\n')
                 else:
-                    ser.write(b'far left\n')
+                    ser.write(b'farLeft\n')
             else:
-                ser.write(b'out frame\n')
+                ser.write(b'outFrame\n')
             waitForExecution()
             if not ret:
                 break

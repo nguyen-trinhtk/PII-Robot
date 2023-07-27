@@ -8,8 +8,8 @@
 #define IN_4 10
 const int maxSpeed = 255;
 const int normSpeed = 100;
-const int turnSpeed = 80;
-const minSpeed = 40;
+const int turnSpeed = 50;
+
 
 
 void setup() {
@@ -169,45 +169,9 @@ void turnLeft(float second){
 }
 
 void turnRight(float second){
-  digitalWrite(IN1_PIN, LOW);
+  analogWrite(IN1_PIN, turnSpeed);
   digitalWrite(IN2_PIN, LOW);
   digitalWrite(IN3_PIN, LOW);
-  analogWrite(IN4_PIN, turnSpeed);
-  delay(second*1000);
-  stop();
-  Serial.println("Done executing");
-}
-
-void slowAround(float second){
-  digitalWrite(IN1_PIN, LOW);
-  digitalWrite(IN2_PIN, LOW);
-  digitalWrite(IN3_PIN, LOW);
-  analogWrite(IN4_PIN, minSpeed);
-  delay(second*500);
-  stop(100);
-  digitalWrite(IN1_PIN, LOW);
-  digitalWrite(IN2_PIN, LOW);
-  digitalWrite(IN3_PIN, LOW);
-  analogWrite(IN4_PIN, minSpeed);
-  delay(second*500);
-  stop();
-  Serial.println("Done executing");
-}
-
-void ctrlLeft(int leftpeed, int rightSpeed, int second){
-  digitalWrite(IN1_PIN, LOW);
-  analogWrite(IN2_PIN, leftSpeed);
-  digitalWrite(IN3_PIN, LOW);
-  analogWrite(IN4_PIN, rightSpeed);
-  delay(second*1000);
-  stop();
-  Serial.println("Done executing");
-}
-
-void ctrlRight(int leftSpeed, int rightSpeed, int second){
-  analogWrite(IN1_PIN, leftSpeed);
-  digitalWrite(IN2_PIN, LOW);
-  analogWrite(IN3_PIN, rightSpeed);
   digitalWrite(IN4_PIN, LOW);
   delay(second*1000);
   stop();
@@ -247,33 +211,15 @@ void caseChoose(){
       sendDoneSignal();
       turnLeft(0.5);
     }
-    else if (msg == "farRight"){
-      sendDoneSignal();
-      turnRight(0.5);
-    }
-    else if (msg == "nearLeft"){
-      sendDoneSignal();
-      turnLeft(0.5);
-    }
-    else if (msg == "nearRight"){
-      sendDoneSignal();
-      turnLeft(0.5);
-    }
-    else if (msg == "centered"){
-      sendDoneSignal();
-      turnLeft(0.5);
-    }
-    else if (msg == "outFrame"){
-      sendDoneSignal();
-      slowAround(0.5);
-    }
-  }
-  else{
-    stop(0.1);
+
+
   }
 }
 
 void loop() {
-  startEngine();
-  caseChoose();
+   startEngine();
+   
+  else{
+    stop(0.1);
+  }
 }
