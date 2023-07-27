@@ -68,8 +68,7 @@ while True:
     if (cnt%60==0):
         object = detect(frame)
         if object:
-            print('Bottle detected with probability: {}%'.format(object["percentage_probability"]))
-            print('Bottle {} mm away at an angle of {} degrees'.format(info(frame,object)[1], info(frame,object)[0]))
+            
             center(frame)
         else:
             print('No bottle found')

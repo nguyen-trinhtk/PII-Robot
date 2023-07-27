@@ -40,8 +40,23 @@ def goRandomly():
         time.sleep(random.randint(1,10)/10)
     ser.write(b'0')
 
-with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
-    while True:
-        if not interrupt:
-            goRandomly()
+def bottleFound():
+    data = ser.readline().decode().strip()
+    if (data == 'bottle found'):
+        return True
+    return False
+def bottleCollected():
+    data = ser.readline().decode().strip()
+    if (data == 'bottle collected'):
+        return True
+    return False
+
+def main():
+    with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
+        while True:
+            if not interrupt or bottleFound():
+                goRandomly()
+            if bottleFound():
+                while not bottleCollected():
+                    pass
             
