@@ -129,6 +129,7 @@ def center():
             waitForExecution()
             if not ret:
                 break
+        cv2.imshow('frame', cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE))
 
 def runTo():
     ret, frame = cam.read()
