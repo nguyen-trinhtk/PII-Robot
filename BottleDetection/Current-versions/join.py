@@ -57,7 +57,7 @@ def goRandomly():
             if (bottleFound):
                 break
     else:
-        for i in range*random.randint(1,10):
+        for i in range(random.randint(1,10)):
             time.sleep(0.1)
             if (bottleFound):
                 break
@@ -183,8 +183,8 @@ def mainCamera():
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    p1 = multiprocessing.Process(target = mainCamera())
-    p2 = multiprocessing.Process(target = movement())
+    p1 = multiprocessing.Process(target = mainCamera)
+    p2 = multiprocessing.Process(target = movement)
     p1.start()
     p2.start()
     p1.join()

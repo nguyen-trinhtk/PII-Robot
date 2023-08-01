@@ -7,9 +7,9 @@
 #define IN_3 9
 #define IN_4 10
 const int maxSpeed = 255;
-const int normSpeed = 100;
-const int turnSpeed = 80;
-const minSpeed = 40;
+const int normSpeed = 60;
+const int turnSpeed = 40;
+const int minSpeed = 20;
 
 
 void setup() {
@@ -44,26 +44,22 @@ void stop(float second){
 }
 
 void startEngine(){
-  digitalWrite(IN_1, HIGH);
+  digitalWrite(IN_1, LOW);
   digitalWrite(IN_2, LOW);
   digitalWrite(IN_3,LOW);
-  digitalWrite(IN_4, HIGH);
+  digitalWrite(IN_4, LOW);
 }
 
 void waitUntilRelease(){
     while (true){
     if (Serial.available()){
-        String msg = Serial.readStringUntil("\n");
+        String msg = Serial.readStringUntil('\n');
         if (msg == "stop"){
             break;
         }
     }
   }
   stop();
-}
-
-void sendDoneSignal(){
-  Serial.println("stop");
 }
 
 void forward(){
@@ -194,7 +190,7 @@ void slowAround(float second){
   Serial.println("Done executing");
 }
 
-void ctrlLeft(int leftpeed, int rightSpeed, int second){
+void ctrlLeft(int leftSpeed, int rightSpeed, int second){
   digitalWrite(IN1_PIN, LOW);
   analogWrite(IN2_PIN, leftSpeed);
   digitalWrite(IN3_PIN, LOW);
@@ -214,66 +210,51 @@ void ctrlRight(int leftSpeed, int rightSpeed, int second){
   Serial.println("Done executing");
 }
 
-void caseChoose(){
-  if (Serial.available()){
-    String msg = Serial.readStringUntil("\n");
-    msg.trim();
-    //stop control in python
-    if (msg == "forward"){
-      sendDoneSignal();
-      forward();
-    }
-    else if (msg == "backward"){
-      sendDoneSignal();
+void stopForever(){
+  while (true){
+    stop();
+  }
+}
+
+void caseChoose(String msg){
+  if (msg == "backward"){
       backward();
     }
-    else if (msg == "rotateRight"){
-      sendDoneSignal();
-      rotateRight();
-    }
-    else if (msg == "rotateLeft"){
-      sendDoneSignal();
-      rotateLeft();
-    }
     else if (msg == "turnLeft"){
-      sendDoneSignal();
       turnLeft();
     }
     else if (msg == "turnRight"){
-      sendDoneSignal();
       turnRight();
     }
+    else if (msg == "forward"){
+      forward();
+    }
+  //automatic bottle centering control
     else if (msg == "farLeft"){
-      sendDoneSignal();
       turnLeft(0.5);
     }
     else if (msg == "farRight"){
-      sendDoneSignal();
       turnRight(0.5);
     }
     else if (msg == "nearLeft"){
-      sendDoneSignal();
-      turnLeft(0.5);
+      turnLeft(0.2);
     }
     else if (msg == "nearRight"){
-      sendDoneSignal();
-      turnLeft(0.5);
-    }
-    else if (msg == "centered"){
-      sendDoneSignal();
-      turnLeft(0.5);
+      turnRight(0.2);
     }
     else if (msg == "outFrame"){
-      sendDoneSignal();
       slowAround(0.5);
     }
+}
+
+void loop() {
+   startEngine();
+   if (Serial.available()){
+    String msg = Serial.readStringUntil('\n');
+    msg.trim();
+    caseChoose(msg);
   }
   else{
     stop(0.1);
   }
-}
-
-void loop() {
-  startEngine();
-  caseChoose();
 }
