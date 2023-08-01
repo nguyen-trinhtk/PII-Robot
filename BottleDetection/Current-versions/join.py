@@ -33,15 +33,19 @@ def on_press(key):
     if key == keyboard.Key.down:
         ser.write(b'backward\n')
         interrupt = True
+        print("kb-backward")
     elif key == keyboard.Key.left:
         ser.write(b'turnLeft\n')
         interrupt = True
+        print("kb-left")
     elif key == keyboard.Key.right:
         ser.write(b'turnRight\n')
         interrupt = True
+        print("kb-right")
     elif key == keyboard.Key.up:
         ser.write(b'forward\n')
         interrupt = True
+        print("kb-forward")
                                       
 def on_release(key):
     ser.write(b'stop\n')
@@ -51,6 +55,7 @@ def on_release(key):
 def goRandomly():
     nextAction = random.choice(actions)
     ser.write(nextAction)
+    print("randomizing actions")
     if actions.index(nextAction) < 2:
         for i in range(random.randint(10,20)):
             time.sleep(0.1)
@@ -109,7 +114,7 @@ def center():
                 angle = info(frame,object)[0]
                 print('Current angle: ' + str(angle))
                 if (abs(angle) <= 10):
-                    ser.write(b'centered\n')
+                    print("centered")
                     return
                 elif (angle < -45):
                     ser.write(b'farRight\n')
@@ -173,7 +178,7 @@ def mainCamera():
                 global bottleCollected 
                 bottleCollected = True
             else:
-                print('no bottle found')
+                print('No bottle found')
         if not ret:
             break
         if cv2.waitKey(1)==ord('q'):
