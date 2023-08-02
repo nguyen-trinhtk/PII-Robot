@@ -8,7 +8,7 @@ import random
 import serial
 import time
 from pynput import keyboard
-import multiprocessing
+import threading
 
 ser = serial.Serial('COM8', 9600)
 
@@ -146,7 +146,6 @@ def runTo():
         pass
 
 def collectedCheck():
-    #Check if bottle is collected
     ser.write(b'backward\n')
     time.sleep(1)
     ret, frame = cam.read()
@@ -189,9 +188,9 @@ def mainCamera():
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    p1 = multiprocessing.Process(target = mainCamera)
-    p2 = multiprocessing.Process(target = movement)
-    p1.start()
-    p2.start()
-    p1.join()
-    p2.join()
+    thr1 = threading.Thread(target = mainCamera)
+    thr2 = threading.Thread(target = movement)
+    thr1.start()
+    thr2.start()
+    thr1.join()
+    thr2.join()
