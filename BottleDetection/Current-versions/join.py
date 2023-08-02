@@ -1,5 +1,3 @@
-#robot going randomly
-#interruption from keyboard can manually navigate robot
 from imageai.Detection import ObjectDetection
 import os
 import cv2
@@ -138,7 +136,7 @@ def runTo():
     if (object):
         distance = info(frame, object)[1]
         ser.write(b'forward\n')
-        time.sleep(distance/10) #adjust the division constant 
+        time.sleep(distance/100)
         ser.write(b'stop\n')
     else:
         runTo()
@@ -160,7 +158,6 @@ def collectedCheck():
 
 def mainCamera():   
     cnt = -1
-    
     while True:
         ret, frame = cam.read()
         frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)

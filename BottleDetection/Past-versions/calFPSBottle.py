@@ -3,21 +3,16 @@ import os
 import cv2
 import math
 import time
- # Get the current working directory
 execution_path = os.getcwd()
- # Initialize the camera
 cam = cv2.VideoCapture(0)
- # Check if the camera is opened
 if not cam.isOpened():
     print('cam is not opening')
     exit()
- # Initialize the object detector
 detector = ObjectDetection()
 detector.setModelTypeAsYOLOv3()
 detector.setModelPath(os.path.join(execution_path, "BottleDetection\models\yolov3.pt"))
 detector.loadModel()
 def info(frame,object):
-    """Calculate the angle and distance of the object from the frame."""
     endX = frame.shape[1]
     midY = int(frame.shape[0]//2)
     difY = midY - (object["box_points"][1] + object["box_points"][3])//2
@@ -29,7 +24,6 @@ def info(frame,object):
     return int(math.degrees(absAngle)), int(distance)
 
 def detect(frame):
-    """Detect the object in the frame."""
     detections =  detector.detectObjectsFromImage(input_image=frame,
                                                     minimum_percentage_probability=80,
                                                     display_percentage_probability = True,
@@ -37,7 +31,6 @@ def detect(frame):
     return next((eachObject for eachObject in detections if eachObject['name']=='bottle'), None)
 
 def center(frame):
-    """Adjust the camera to center the object."""
     frc = 0
     while True:
         frc += 1

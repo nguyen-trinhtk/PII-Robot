@@ -6,10 +6,13 @@
 #define IN_2 8
 #define IN_3 9
 #define IN_4 10
+#define ENA 11
+#define ENB 12
+
 const int maxSpeed = 255;
-const int normSpeed = 60;
-const int turnSpeed = 40;
-const int minSpeed = 20;
+const int normSpeed = 80;
+const int turnSpeed = 60;
+const int minSpeed = 40;
 
 
 void setup() {
@@ -22,6 +25,8 @@ void setup() {
   pinMode(IN_2, OUTPUT);
   pinMode(IN_3, OUTPUT);
   pinMode(IN_4, OUTPUT);
+  pinMode(ENA, OUTPUT);
+  pinMode(ENB, OUTPUT);
 }
 
 void stop(){
@@ -246,6 +251,7 @@ void caseChoose(String msg){
       slowAround(0.5);
     }
 }
+
 
 void loop() {
    startEngine();

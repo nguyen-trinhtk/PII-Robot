@@ -64,5 +64,4 @@ def main():
             if bottleFound():
                 while not bottleCollected():
                     pass
-            
 main()

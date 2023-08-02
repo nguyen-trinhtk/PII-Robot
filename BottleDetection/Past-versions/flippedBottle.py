@@ -2,18 +2,13 @@ from imageai.Detection import ObjectDetection
 import os
 import cv2
 import math
-# Get the current working directory
 execution_path = os.getcwd()
-# Initialize the camera
 cam = cv2.VideoCapture(0)
-# Check if the camera is opened
 if not cam.isOpened():
     print('cam is not opening')
     exit()
-#Initializing variables
 cnt = -1
 def info(frame,object):
-    """Calculate the angle and distance of the object from the frame."""
     endX = frame.shape[1]
     midY = int(frame.shape[0]//2)
     difY = midY - (object["box_points"][1] + object["box_points"][3])//2
@@ -27,7 +22,6 @@ def info(frame,object):
     distance = distanceX/math.cos(absAngle)
     return int(math.degrees(absAngle)), int(distance)
 def detect(frame):
-    """Detect the object in the frame."""
     detections =  detector.detectObjectsFromImage(input_image=frame,
                                                     minimum_percentage_probability=80,
                                                     display_percentage_probability = True,
@@ -37,7 +31,6 @@ def detect(frame):
             return eachObject
         
 def center():
-    """Adjust the camera to center the object."""
     adjust = True
     frc = 0
     while (adjust == True):
@@ -65,7 +58,6 @@ def center():
                 print('Object out of frame')
     print ('Bottle {} mm away, centered'.format(info(frame,object)[1], info(frame,object)[0]))
     print("--------------------------------")
-# Initialize the object detector
 detector = ObjectDetection()
 detector.setModelTypeAsYOLOv3()
 detector.setModelPath(os.path.join(execution_path, "BottleDetection\models\yolov3.pt"))
@@ -81,11 +73,6 @@ while True:
             print('Bottle detected with probability: {}%'.format(object["percentage_probability"]))
             print('Bottle {} mm away at an angle of {} degrees'.format(info(frame,object)[1], info(frame,object)[0]))
             center()
-            # start_point = [object["box_points"][0], object["box_points"][1]]
-            # end_point = [object["box_points"][2], object["box_points"][3]]
-            # color = (255, 0, 0)  # Blue color in BGR
-            # thickness = 2  # Line thickness of 2 px
-            # frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
         else:
             print('No bottle found')
     if not ret:

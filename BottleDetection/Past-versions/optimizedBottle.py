@@ -2,22 +2,19 @@ from imageai.Detection import ObjectDetection
 import os
 import cv2
 import math
-
- # Get the current working directory
 execution_path = os.getcwd()
- # Initialize the camera
+
 cam = cv2.VideoCapture(0)
- # Check if the camera is opened
+
 if not cam.isOpened():
     print('cam is not opening')
     exit()
- # Initialize the object detector
+
 detector = ObjectDetection()
 detector.setModelTypeAsYOLOv3()
 detector.setModelPath(os.path.join(execution_path, "BottleDetection/models/yolov3.pt"))
 detector.loadModel()
 def info(frame,object):
-    """Calculate the angle and distance of the object from the frame."""
     endX = frame.shape[1]
     midY = int(frame.shape[0]//2)
     difY = midY - (object["box_points"][1] + object["box_points"][3])//2
