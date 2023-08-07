@@ -113,27 +113,15 @@ def center():
                 angle = info(frame,object)[0]
                 print('Current angle: ' + str(angle))
                 if (abs(angle) <= 10):
-                    print('center')
-                    ser.write(b'centered\n')
+                    print('centered')
                     return
-                elif (angle > 45):
-                    print('fR')
-                    ser.write(b'farRight\n')
-                elif (angle > 0):
-                    print('nR')
-                    ser.write(b'nearRight\n')
-                elif (angle > -45):
-                    print('nL')
-                    ser.write(b'nearLeft\n')
-                else:
-                    print('fL')
-                    ser.write(b'farLeft\n')
+                print(f'Current angle: {angle} ')
+                msg = ('farRight' if angle > 45 else 'nearRight' if angle > 0 else 'nearLeft' if angle > -45 else 'farLeft') + '\n'
             else:
-                ser.write(b'outFrame\n')
-                print('outFr')
+                msg = 'outFrame\n'
+            ser.write(msg.encode('utf-8'))
+            print(msg)
             waitForExecution()
-            if not ret:
-                break
         cv2.imshow('frame', cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE))
 
 def runTo():
