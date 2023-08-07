@@ -10,8 +10,8 @@
 // #define ENB 12
 
 const int maxSpeed = 255;
-const int normSpeed = 80;
-const int turnSpeed = 60;
+const int strSpeed = 150;
+const int turnSpeed = 255;
 const int minSpeed = 40;
 
 
@@ -25,8 +25,6 @@ void setup() {
   pinMode(IN_2, OUTPUT);
   pinMode(IN_3, OUTPUT);
   pinMode(IN_4, OUTPUT);
-  pinMode(ENA, OUTPUT);
-  pinMode(ENB, OUTPUT);
 }
 
 void stop(){
@@ -49,10 +47,10 @@ void stop(float second){
 }
 
 void startEngine(){
-  digitalWrite(IN_1, LOW);
-  digitalWrite(IN_2, LOW);
+  analogWrite(IN_1, 90);
+  digitalWrite(IN_2, HIGH);
   digitalWrite(IN_3,LOW);
-  digitalWrite(IN_4, LOW);
+  analogWrite(IN_4, 90);
 }
 
 void waitUntilRelease(){
@@ -69,23 +67,23 @@ void waitUntilRelease(){
 
 void forward(){
   startEngine();
-  analogWrite(IN1_PIN, normSpeed);
+  analogWrite(IN1_PIN, strSpeed);
   digitalWrite(IN2_PIN, LOW);
   digitalWrite(IN3_PIN, LOW);
-  analogWrite(IN4_PIN, normSpeed);
+  analogWrite(IN4_PIN, strSpeed);
   waitUntilRelease();
 }
 
 void backward(){
   startEngine();
   digitalWrite(IN1_PIN, LOW);
-  analogWrite(IN2_PIN, normSpeed);
-  analogWrite(IN3_PIN, normSpeed);
+  analogWrite(IN2_PIN, strSpeed);
+  analogWrite(IN3_PIN, strSpeed);
   digitalWrite(IN4_PIN, LOW);
   waitUntilRelease();
 }
 
-void rotateLeft(){
+void rotateRight(){
   startEngine();
   digitalWrite(IN1_PIN, LOW);
   analogWrite(IN2_PIN, turnSpeed);
@@ -93,7 +91,7 @@ void rotateLeft(){
   analogWrite(IN4_PIN, turnSpeed);
   waitUntilRelease();
 }
-void rotateRight(){
+void rotateLeft(){
   startEngine();
   analogWrite(IN1_PIN, turnSpeed);
   digitalWrite(IN2_PIN, LOW);
@@ -102,7 +100,7 @@ void rotateRight(){
   waitUntilRelease();
 }
 
-void turnLeft(){
+void turnRight(){
   digitalWrite(IN1_PIN, LOW);
   digitalWrite(IN2_PIN, LOW);
   digitalWrite(IN3_PIN, LOW);
@@ -110,7 +108,7 @@ void turnLeft(){
   waitUntilRelease();
 }
 
-void turnRight(){
+void turnLeft(){
   analogWrite(IN1_PIN, turnSpeed);
   digitalWrite(IN2_PIN, LOW);
   digitalWrite(IN3_PIN, LOW);
@@ -120,10 +118,10 @@ void turnRight(){
 
 void forward(float second){
   startEngine();
-  analogWrite(IN1_PIN, normSpeed);
+  analogWrite(IN1_PIN, strSpeed);
   digitalWrite(IN2_PIN, LOW);
   digitalWrite(IN3_PIN, LOW);
-  analogWrite(IN4_PIN, normSpeed);
+  analogWrite(IN4_PIN, strSpeed);
   delay(second*1000);
   Serial.println("Done executing");
 }
@@ -131,14 +129,14 @@ void forward(float second){
 void backward(float second){
   startEngine();
   digitalWrite(IN1_PIN, LOW);
-  analogWrite(IN2_PIN, normSpeed);
-  analogWrite(IN3_PIN, normSpeed);
+  analogWrite(IN2_PIN, strSpeed);
+  analogWrite(IN3_PIN, strSpeed);
   digitalWrite(IN4_PIN, LOW);
   delay(second*1000);
   Serial.println("Done executing");
 }
 
-void rotateLeft(float second){
+void rotateRight(float second){
   startEngine();
   digitalWrite(IN1_PIN, LOW);
   analogWrite(IN2_PIN, turnSpeed);
@@ -148,22 +146,12 @@ void rotateLeft(float second){
   stop();
   Serial.println("Done executing");
 }
-void rotateRight(float second){
+void rotateLeft(float second){
   startEngine();
   analogWrite(IN1_PIN, turnSpeed);
   digitalWrite(IN2_PIN, LOW);
   analogWrite(IN3_PIN, turnSpeed);
   digitalWrite(IN4_PIN, LOW);
-  delay(second*1000);
-  stop();
-  Serial.println("Done executing");
-}
-
-void turnLeft(float second){
-  digitalWrite(IN1_PIN, LOW);
-  digitalWrite(IN2_PIN, LOW);
-  digitalWrite(IN3_PIN, LOW);
-  analogWrite(IN4_PIN, turnSpeed);
   delay(second*1000);
   stop();
   Serial.println("Done executing");
@@ -174,6 +162,16 @@ void turnRight(float second){
   digitalWrite(IN2_PIN, LOW);
   digitalWrite(IN3_PIN, LOW);
   analogWrite(IN4_PIN, turnSpeed);
+  delay(second*1000);
+  stop();
+  Serial.println("Done executing");
+}
+
+void turnLeft(float second){
+  digitalWrite(IN4_PIN, LOW);
+  digitalWrite(IN2_PIN, LOW);
+  digitalWrite(IN3_PIN, LOW);
+  analogWrite(IN1_PIN, turnSpeed);
   delay(second*1000);
   stop();
   Serial.println("Done executing");
@@ -236,19 +234,19 @@ void caseChoose(String msg){
     }
   //automatic bottle centering control
     else if (msg == "farLeft"){
-      turnLeft(0.5);
+      turnLeft(1.5);
     }
     else if (msg == "farRight"){
-      turnRight(0.5);
+      turnRight(1.5);
     }
     else if (msg == "nearLeft"){
-      turnLeft(0.2);
+      turnLeft(0.7);
     }
     else if (msg == "nearRight"){
-      turnRight(0.2);
+      turnRight(0.7);
     }
     else if (msg == "outFrame"){
-      slowAround(0.5);
+      slowAround(1);
     }
 }
 

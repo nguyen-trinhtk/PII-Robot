@@ -2,14 +2,17 @@ from imageai.Detection import ObjectDetection
 import os
 import cv2
 import math
+import serial
+import time
+ser = serial.Serial(port='COM8', baudrate=9600, timeout=.1)
+
 execution_path = os.getcwd()
-
 cam = cv2.VideoCapture(0)
-
 if not cam.isOpened():
-    print('cam is not opening')
+    ser.write('e')
     exit()
 
+# Initialize the object detector
 detector = ObjectDetection()
 detector.setModelTypeAsYOLOv3()
 detector.setModelPath(os.path.join(execution_path, "BottleDetection\Current-versions\models\yolov3.pt"))
@@ -26,21 +29,26 @@ def info(frame,object):
     return int(math.degrees(absAngle)), int(distance)
 
 def detect(frame):
-    """Detect the object in the frame."""
     detections =  detector.detectObjectsFromImage(input_image=frame,
                                                     minimum_percentage_probability=80,
                                                     display_percentage_probability = True,
                                                     display_object_name = True)
     return next((eachObject for eachObject in detections if eachObject['name']=='bottle'), None)
 
-def center(frame):
-    """Adjust the camera to center the object."""
+def waitForExecution():
+    while True:
+                data = ser.readline().decode().strip()
+                if (data.lower()=='done executing'):
+                    break
+
+def center():
     frc = 0
     while True:
+        ser.write(0)
         frc += 1
         ret, frame = cam.read()
         frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
-        if (frc%30 == 0):
+        if (frc%20 == 0):
             object = detect(frame)
             if (object):
                 cv2.imshow('frame', frame)
@@ -53,28 +61,61 @@ def center(frame):
                 msg = ('farRight' if angle > 45 else 'nearRight' if angle > 0 else 'nearLeft' if angle > -45 else 'farLeft') + '\n'
             else:
                 msg = 'outFrame\n'
+            ser.write(msg.encode('utf-8'))
             print(msg)
-        if not ret:
-            break
-        cv2.imshow('frame', cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE))
-    
+            waitForExecution()
+            if not ret:
+                break
 
-cnt = -1
-while True:
-    cnt += 1
+def runTo():
     ret, frame = cam.read()
     frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
-    if (cnt%60==0):
-        object = detect(frame)
-        if object:
-            
-            center(frame)
-        else:
-            print('No bottle found')
+    object = detect(frame)
+    if (object):
+        distance = info(frame, object)[1]
+        ser.write(b'forward\n')
+        time.sleep(distance/65) #adjust the division constant 
+        ser.write(b'stop\n')
+    else:
+        runTo()
     if not ret:
-        break
-    cv2.imshow('frame', cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE))
-    if cv2.waitKey(1)==ord('q'):
-        break
-cam.release()
-cv2.destroyAllWindows()
+        pass
+
+
+def collectedCheck():
+    #Check if bottle is collected
+    ser.write(b'backward\n')
+    time.sleep(1)
+    ret, frame = cam.read()
+    object = detect(frame)
+    if not object:
+        return
+    else:
+        center()
+        runTo()
+        collectedCheck()
+
+def main():   
+    cnt = -1
+    ret, frame = cam.read()
+    frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+    while True:
+        ser.write(0)
+        cnt += 1
+        if (cnt%20==0):
+            object = detect(frame)
+            if object:
+                print('Bottle found')
+                ser.write(b'bottle found\n')
+                center()
+                runTo()
+                collectedCheck()
+                ser.write(b'bottle collected\n')
+            else: print('No bottle found')
+        if not ret:
+            break
+        if cv2.waitKey(1)==ord('q'):
+            break
+        cv2.imshow('frame', cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE))
+    cam.release()
+    cv2.destroyAllWindows()

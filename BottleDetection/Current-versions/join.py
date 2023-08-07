@@ -8,42 +8,23 @@ import time
 from pynput import keyboard
 import threading
 
-ser = serial.Serial('COM8', 9600)
-
+ser = serial.Serial('COM13', 9600)
+# ser = serial.Serial('/dev/ttyACM0/', 9600)
 execution_path = os.getcwd()
 cam = cv2.VideoCapture(0)
 if not cam.isOpened():
     ser.write('e')
     exit()
 
-actions = [b'forward\n', b'backward\n', b'turnRight\n', b'turnLeft\n']
+actions = [b'forward\n']
 bottleFound = False
 bottleCollected  = False
 interrupt = False
 
 detector = ObjectDetection()
-detector.setModelTypeAsYOLOv3()
-detector.setModelPath(os.path.join(execution_path, "BottleDetection\Current-versions\models\yolov3.pt"))
+detector.setModelTypeAsTinyYOLOv3()
+detector.setModelPath(os.path.join(execution_path, "BottleDetection/Current-versions/models/tiny-yolov3.pt"))
 detector.loadModel()
-
-def markupY(frame, section):
-    x = frame.shape[1]//2
-    y = frame.shape[0]
-    xleft = x - 5
-    xright = x + 5
-    cv2.line(frame, (x,0), (x,y), (0,0,255), 2)
-    for i in range(section-1):
-         yTemp = int((i+1)*y/section)
-         cv2.line(frame, (xleft,yTemp), (xright, yTemp), (0,0,255), 2)
-
-def markupX(frame, section):
-    x = frame.shape[1]
-    y = frame.shape[0]
-    yUp = y - 7
-    cv2.line(frame, (0,y), (x,y), (0,0,255), 2)
-    for i in range(section-1):
-         xTemp = int((i+1)*x/section)
-         cv2.line(frame, (xTemp,yUp), (xTemp, y), (0,0,255), 2)
 
 def on_press(key):
     global interrupt
@@ -132,18 +113,24 @@ def center():
                 angle = info(frame,object)[0]
                 print('Current angle: ' + str(angle))
                 if (abs(angle) <= 10):
-                    print("centered")
+                    print('center')
+                    ser.write(b'centered\n')
                     return
-                elif (angle < -45):
+                elif (angle > 45):
+                    print('fR')
                     ser.write(b'farRight\n')
-                elif (angle < 0):
+                elif (angle > 0):
+                    print('nR')
                     ser.write(b'nearRight\n')
-                elif (angle < 45):
+                elif (angle > -45):
+                    print('nL')
                     ser.write(b'nearLeft\n')
                 else:
+                    print('fL')
                     ser.write(b'farLeft\n')
             else:
                 ser.write(b'outFrame\n')
+                print('outFr')
             waitForExecution()
             if not ret:
                 break
@@ -156,7 +143,7 @@ def runTo():
     if (object):
         distance = info(frame, object)[1]
         ser.write(b'forward\n')
-        time.sleep(distance/65)
+        time.sleep(distance/40)
         ser.write(b'stop\n')
     else:
         runTo()
@@ -165,7 +152,7 @@ def runTo():
 
 def collectedCheck():
     ser.write(b'backward\n')
-    time.sleep(1)
+    time.sleep(0.5)
     ret, frame = cam.read()
     object = detect(frame)
     if not object:
@@ -176,11 +163,11 @@ def collectedCheck():
         runTo()
         collectedCheck()
 
-def mainCamera():   
+def mainCamera():
+    print('camera') 
     cnt = -1
     while True:
         ret, frame = cam.read()
-        markupY(frame, 8)
         frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
         ser.write(0)
         cnt += 1
@@ -207,8 +194,8 @@ def mainCamera():
 
 if __name__ == '__main__':
     thr1 = threading.Thread(target = mainCamera)
-    thr2 = threading.Thread(target = movement)
+    # thr2 = threading.Thread(target = movement)
     thr1.start()
-    thr2.start()
+    # thr2.start()
     thr1.join()
-    thr2.join()
+    # thr2.join()
