@@ -6,8 +6,8 @@
 #define IN_2 8
 #define IN_3 9
 #define IN_4 10
-#define ENA 11
-#define ENB 12
+// #define ENA 11
+// #define ENB 12
 
 const int maxSpeed = 255;
 const int normSpeed = 80;

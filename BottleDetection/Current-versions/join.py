@@ -26,6 +26,25 @@ detector.setModelTypeAsYOLOv3()
 detector.setModelPath(os.path.join(execution_path, "BottleDetection\Current-versions\models\yolov3.pt"))
 detector.loadModel()
 
+def markupY(frame, section):
+    x = frame.shape[1]//2
+    y = frame.shape[0]
+    xleft = x - 5
+    xright = x + 5
+    cv2.line(frame, (x,0), (x,y), (0,0,255), 2)
+    for i in range(section-1):
+         yTemp = int((i+1)*y/section)
+         cv2.line(frame, (xleft,yTemp), (xright, yTemp), (0,0,255), 2)
+
+def markupX(frame, section):
+    x = frame.shape[1]
+    y = frame.shape[0]
+    yUp = y - 7
+    cv2.line(frame, (0,y), (x,y), (0,0,255), 2)
+    for i in range(section-1):
+         xTemp = int((i+1)*x/section)
+         cv2.line(frame, (xTemp,yUp), (xTemp, y), (0,0,255), 2)
+
 def on_press(key):
     global interrupt
     if key == keyboard.Key.down:
@@ -81,9 +100,10 @@ def info(frame,object):
     difY = midY - (object["box_points"][1] + object["box_points"][3])//2
     difX = endX - (object["box_points"][0] + object["box_points"][2])//2
     dX = endX - max(object["box_points"][0],object["box_points"][2])
-    distanceX = (142.902*(math.e**(2.512*(dX/endX)))-132.985+400)
+    distanceX = (309.059*(math.e**(1.04215*(dX/endX)))+130.13)/10
     absAngle = 0 if difX == 0 else math.atan(difY/difX)
     distance = distanceX/math.cos(absAngle)
+    print(f"Distance: {distance} cm")
     return int(math.degrees(absAngle)), int(distance)
 
 def detect(frame):
@@ -127,7 +147,7 @@ def center():
             waitForExecution()
             if not ret:
                 break
-        cv2.imshow('frame', cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE))
+        cv2.imshow('frame', cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE))
 
 def runTo():
     ret, frame = cam.read()
@@ -136,7 +156,7 @@ def runTo():
     if (object):
         distance = info(frame, object)[1]
         ser.write(b'forward\n')
-        time.sleep(distance/100)
+        time.sleep(distance/65)
         ser.write(b'stop\n')
     else:
         runTo()
@@ -160,6 +180,7 @@ def mainCamera():
     cnt = -1
     while True:
         ret, frame = cam.read()
+        markupY(frame, 8)
         frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
         ser.write(0)
         cnt += 1
@@ -180,7 +201,7 @@ def mainCamera():
             break
         if cv2.waitKey(1)==ord('q'):
             break
-        cv2.imshow('frame', cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE))
+        cv2.imshow('frame', cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE))
     cam.release()
     cv2.destroyAllWindows()
 
