@@ -22,8 +22,8 @@ bottleCollected  = False
 interrupt = False
 
 detector = ObjectDetection()
-detector.setModelTypeAsTinyYOLOv3()
-detector.setModelPath(os.path.join(execution_path, "BottleDetection/Current-versions/models/tiny-yolov3.pt"))
+detector.setModelTypeAsYOLOv3()
+detector.setModelPath(os.path.join(execution_path, "BottleDetection/Current-versions/models/yolov3.pt"))
 detector.loadModel()
 
 def on_press(key):
