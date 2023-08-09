@@ -66,6 +66,14 @@ void waitUntilRelease(){
 }
 
 void forward(){
+  analogWrite(IN1_PIN, strSpeed);
+  digitalWrite(IN2_PIN, LOW);
+  digitalWrite(IN3_PIN, LOW);
+  analogWrite(IN4_PIN, strSpeed);
+  waitUntilRelease();
+}
+
+void collect(){
   startEngine();
   analogWrite(IN1_PIN, strSpeed);
   digitalWrite(IN2_PIN, LOW);
@@ -75,7 +83,6 @@ void forward(){
 }
 
 void backward(){
-  startEngine();
   digitalWrite(IN1_PIN, LOW);
   analogWrite(IN2_PIN, strSpeed);
   analogWrite(IN3_PIN, strSpeed);
@@ -84,7 +91,7 @@ void backward(){
 }
 
 void rotateRight(){
-  startEngine();
+  ;
   digitalWrite(IN1_PIN, LOW);
   analogWrite(IN2_PIN, turnSpeed);
   digitalWrite(IN3_PIN, LOW);
@@ -92,7 +99,7 @@ void rotateRight(){
   waitUntilRelease();
 }
 void rotateLeft(){
-  startEngine();
+  ;
   analogWrite(IN1_PIN, turnSpeed);
   digitalWrite(IN2_PIN, LOW);
   analogWrite(IN3_PIN, turnSpeed);
@@ -117,7 +124,7 @@ void turnLeft(){
 }
 
 void forward(float second){
-  startEngine();
+  ;
   analogWrite(IN1_PIN, strSpeed);
   digitalWrite(IN2_PIN, LOW);
   digitalWrite(IN3_PIN, LOW);
@@ -127,7 +134,7 @@ void forward(float second){
 }
 
 void backward(float second){
-  startEngine();
+  ;
   digitalWrite(IN1_PIN, LOW);
   analogWrite(IN2_PIN, strSpeed);
   analogWrite(IN3_PIN, strSpeed);
@@ -137,7 +144,7 @@ void backward(float second){
 }
 
 void rotateRight(float second){
-  startEngine();
+  ;
   digitalWrite(IN1_PIN, LOW);
   analogWrite(IN2_PIN, turnSpeed);
   digitalWrite(IN3_PIN, LOW);
@@ -147,7 +154,7 @@ void rotateRight(float second){
   Serial.println("Done executing");
 }
 void rotateLeft(float second){
-  startEngine();
+  ;
   analogWrite(IN1_PIN, turnSpeed);
   digitalWrite(IN2_PIN, LOW);
   analogWrite(IN3_PIN, turnSpeed);
@@ -232,6 +239,9 @@ void caseChoose(String msg){
     else if (msg == "forward"){
       forward();
     }
+    else if (msg == "collect"){
+      collect();
+    }
   //automatic bottle centering control
     else if (msg == "farLeft"){
       turnLeft(1.5);
@@ -252,7 +262,7 @@ void caseChoose(String msg){
 
 
 void loop() {
-   startEngine();
+   ;
    if (Serial.available()){
     String msg = Serial.readStringUntil('\n');
     msg.trim();
