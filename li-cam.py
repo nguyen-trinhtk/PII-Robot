@@ -13,7 +13,6 @@ cam = cv2.VideoCapture(0)
 
 bottleFound = False
 bottleCollected  = False
-interrupt = False
 arduino_port = 'COM13'
 # arduino_port = '/dev/ttyACM0'
 lidar_port = 'COM10'
