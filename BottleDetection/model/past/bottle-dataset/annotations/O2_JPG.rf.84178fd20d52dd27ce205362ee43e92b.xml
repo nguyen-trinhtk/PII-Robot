@@ -1,0 +1,27 @@
+<annotation>
+	<folder></folder>
+	<filename>O2_JPG.rf.84178fd20d52dd27ce205362ee43e92b.jpg</filename>
+	<path>O2_JPG.rf.84178fd20d52dd27ce205362ee43e92b.jpg</path>
+	<source>
+		<database>roboflow.ai</database>
+	</source>
+	<size>
+		<width>416</width>
+		<height>416</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>open bottle</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>1</xmin>
+			<xmax>412</xmax>
+			<ymin>1</ymin>
+			<ymax>343</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 2
+names: ['full-bottle', 'half-bottle']
+
+roboflow:
+  workspace: insystlabs
+  project: bottle-detector-dmqfe
+  version: 4
+  license: Public Domain
+  url: https://universe.roboflow.com/insystlabs/bottle-detector-dmqfe/dataset/4

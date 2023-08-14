@@ -1,0 +1,27 @@
+<annotation>
+	<folder></folder>
+	<filename>R12_JPG.rf.467bab2aa9e37c3f05ec4eba8fcec135.jpg</filename>
+	<path>R12_JPG.rf.467bab2aa9e37c3f05ec4eba8fcec135.jpg</path>
+	<source>
+		<database>roboflow.ai</database>
+	</source>
+	<size>
+		<width>416</width>
+		<height>416</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>bottle cap</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>10</xmin>
+			<xmax>416</xmax>
+			<ymin>1</ymin>
+			<ymax>318</ymax>
+		</bndbox>
+	</object>
+</annotation>
