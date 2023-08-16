@@ -25,17 +25,17 @@ def detect(frame):
         if eachObject['name']=='bottle':
             return eachObject
 
-detector = CustomObjectDetection()
-detector.setModelTypeAsTinyYOLOv3()
-detector.setModelPath(os.path.join(execution_path, "BottleDetection\model\model-training\models/tiny-yolov3_dataset_last.pt"))
-detector.setJsonPath("BottleDetection\model\model-training\models\dataset_tiny-yolov3_detection_config.json")
-detector.loadModel()
-
-# detector = ObjectDetection()
-# detector.setModelTypeAsYOLOv3()
-# detector.setModelPath(os.path.join(execution_path, "BottleDetection\Current-versions\models\yolov3.pt"))
+# detector = CustomObjectDetection()
+# detector.setModelTypeAsTinyYOLOv3()
+# detector.setModelPath(os.path.join(execution_path, "BottleDetection\model\model-training\models/tiny-yolov3_dataset_last.pt"))
+# detector.setJsonPath("BottleDetection\model\model-training\models\dataset_tiny-yolov3_detection_config.json")
 # detector.loadModel()
 
+detector = ObjectDetection()
+detector.setModelTypeAsYOLOv3()
+detector.setModelPath(os.path.join(execution_path, "BottleDetection\Current-versions\models\yolov3.pt"))
+detector.loadModel()
+i = 0
 while True:
     cnt += 1
     ret, frame = cam.read()
@@ -46,7 +46,8 @@ while True:
             # center(object)
             
         else:
-            print('No bottle found')
+            print(i)
+            i+=1
     if not ret:
             break
 
