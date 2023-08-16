@@ -22,7 +22,7 @@ def detect(frame):
                                                     display_percentage_probability = True,
                                                     display_object_name = True)
     for eachObject in detections:
-        if eachObject['name']=='bottle':
+        if eachObject['name'].lower()=='plastic-bottle' or eachObject['name'].lower()=='bottle':
             return eachObject
 
 detector = CustomObjectDetection()

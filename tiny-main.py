@@ -45,10 +45,12 @@ def info(frame,object):
 
 def detect(frame):
     detections =  detector.detectObjectsFromImage(input_image=frame,
-                                                    minimum_percentage_probability=80,
+                                                    minimum_percentage_probability=30,
                                                     display_percentage_probability = True,
                                                     display_object_name = True)
-    return next((eachObject for eachObject in detections if eachObject['name']=='bottle'), None)
+    for eachObject in detections:
+        if eachObject['name'].lower()=='plastic-bottle' or eachObject['name'].lower()=='bottle':
+            return eachObject
 
 def waitForExecution():
     while True:
@@ -188,10 +190,10 @@ def lidar():
                 current_msg = 'rotateLeft\n'
             # if chosen_direction > 45 and chosen_direction < 315:
             #     print("Safe - No obstacle ")
-            #     ser.write(b'0')
+            #     ser.write(b'stop\n')
             #     ser.write(b'forward\n')
             if current_msg != last_msg:
-                ser.write(b'0')
+                ser.write(b'stop\n')
             ser.write(current_msg.encode('utf-8'))
             last_msg = current_msg
 
