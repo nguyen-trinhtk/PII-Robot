@@ -2,7 +2,7 @@ import math
 import time
 from rplidar import RPLidar
 import serial
-from imageai.Detection import ObjectDetection
+from imageai.Detection.Custom import CustomObjectDetection
 import os
 import cv2
 import threading
@@ -21,9 +21,10 @@ if not cam.isOpened():
     print('error opening camera')
     exit()
 
-detector = ObjectDetection()
-detector.setModelTypeAsYOLOv3()
-detector.setModelPath(os.path.join(execution_path, "PII-robot/BottleDetection/Current-versions/models/yolov3.pt"))
+detector = CustomObjectDetection()
+detector.setModelTypeAsTinyYOLOv3()
+detector.setModelPath(os.path.join(execution_path, "BottleDetection/Current-versions/models/tiny-yolov3_dataset_last.pt"))
+detector.setJsonPath("BottleDetection\Current-versions\models\dataset_tiny-yolov3_detection_config.json")
 detector.loadModel()
 
 SAFE_DISTANCE = 550
@@ -148,6 +149,9 @@ def calculate_distance_to_obstacle(scan_data, target_angle):
             return distance
     return distance
 
+current_msg = ''
+last_msg = ''
+
 def lidar():
     lidar = RPLidar(lidar_port) 
     lidar.start_motor() 
@@ -166,32 +170,30 @@ def lidar():
 
             if not obstacles:
                 print("Safe - No obstacle ")
-                ser.write(b'0')
-                ser.write(b'forward\n')
-            if (chosen_direction > 351 and chosen_direction <= 360) or (chosen_direction > 0 and chosen_direction <= 9):
+                current_msg = 'forward\n'
+            elif (chosen_direction > 351 and chosen_direction <= 360) or (chosen_direction > 0 and chosen_direction <= 9):
                 print("Rotate Left - Obstacle on the Front")
-                ser.write(b'0')
-                ser.write(b'rotateLeft\n')
-            if (chosen_direction > 9 and chosen_direction <= 27 and distance_to_obstacle < TOP_SAFE_DISTANCE)  :
+                current_msg = 'rotateLeft\n'
+            elif (chosen_direction > 9 and chosen_direction <= 27 and distance_to_obstacle < TOP_SAFE_DISTANCE)  :
                 print("Turning Right - Obstacle detected on the topRight")
-                ser.write(b'0')
-                ser.write(b'rotateRight\n')
-            if (chosen_direction > 27 and chosen_direction <= 45 and distance_to_obstacle < BOT_SAFE_DISTANCE)  :
+                current_msg = 'rotateRight\n'
+            elif (chosen_direction > 27 and chosen_direction <= 45 and distance_to_obstacle < BOT_SAFE_DISTANCE)  :
                 print("Turning Right - Obstacle detected on the botRight")
-                ser.write(b'0')
-                ser.write(b'rotateRight\n')
-            if (chosen_direction > 333 and chosen_direction <= 351 and distance_to_obstacle < TOP_SAFE_DISTANCE) :
+                current_msg = 'rotateRight\n'
+            elif (chosen_direction > 333 and chosen_direction <= 351 and distance_to_obstacle < TOP_SAFE_DISTANCE) :
                 print("Turning Left - Obstacle detected on the topLeft")
-                ser.write(b'0')
-                ser.write(b'rotateLeft\n')
-            if (chosen_direction > 315 and chosen_direction <= 333 and distance_to_obstacle < BOT_SAFE_DISTANCE) :
+                current_msg = 'rotateLeft\n'
+            elif (chosen_direction > 315 and chosen_direction <= 333 and distance_to_obstacle < BOT_SAFE_DISTANCE) :
                 print("Turning Left - Obstacle detected on the botLeft")
-                ser.write(b'0')
-                ser.write(b'rotateLeft\n')
+                current_msg = 'rotateLeft\n'
             # if chosen_direction > 45 and chosen_direction < 315:
             #     print("Safe - No obstacle ")
             #     ser.write(b'0')
             #     ser.write(b'forward\n')
+            if current_msg != last_msg:
+                ser.write(b'0')
+            ser.write(current_msg.encode('utf-8'))
+            last_msg = current_msg
 
     except KeyboardInterrupt:
         pass
