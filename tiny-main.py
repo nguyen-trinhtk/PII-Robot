@@ -188,10 +188,6 @@ def lidar():
             elif (chosen_direction > 315 and chosen_direction <= 333 and distance_to_obstacle < BOT_SAFE_DISTANCE) :
                 print("Turning Left - Obstacle detected on the botLeft")
                 current_msg = 'rotateLeft\n'
-            # if chosen_direction > 45 and chosen_direction < 315:
-            #     print("Safe - No obstacle ")
-            #     ser.write(b'stop\n')
-            #     ser.write(b'forward\n')
             if current_msg != last_msg:
                 ser.write(b'stop\n')
             ser.write(current_msg.encode('utf-8'))

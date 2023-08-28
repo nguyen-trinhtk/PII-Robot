@@ -18,11 +18,11 @@ cnt = -1
 def detect(frame):
     
     detections =  detector.detectObjectsFromImage(input_image=frame,
-                                                    minimum_percentage_probability=30,
+                                                    minimum_percentage_probability=60,
                                                     display_percentage_probability = True,
                                                     display_object_name = True)
     for eachObject in detections:
-        if eachObject['name'].lower()=='plastic-bottle' or eachObject['name'].lower()=='bottle':
+        if eachObject['name'].lower()=='plastic-bottle':
             return eachObject
 
 detector = CustomObjectDetection()
@@ -44,7 +44,16 @@ while True:
         if object:
             print('Bottle detected with probability: {}%'.format(object["percentage_probability"]))
             # center(object)
+            start_point = [object["box_points"][0], object["box_points"][1]]
+            end_point = [object["box_points"][2], object["box_points"][3]]
             
+            # Blue color in BGR
+            color = (255, 0, 0)
+            
+            # Line thickness of 2 px
+            thickness = 2
+
+            frame = cv2.rectangle(frame, start_point, end_point, color, thickness)
         else:
             print(i)
             i+=1
