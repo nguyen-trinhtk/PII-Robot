@@ -17,7 +17,7 @@ Fusce et rutrum lorem. Mauris porta faucibus tortor, sed fermentum elit elementu
 
 <h2>Report</h2>
 <object data="https://github.com/nguyen-trinhtk/PII-Robot/blob/main/Results/Report%20Paper.pdf" type="application/pdf" width="700px" height="700px">
-        <p>For further information, please refer to our report: <a href="https://github.com/nguyen-trinhtk/PII-Robot/blob/main/Results/Report%20Paper.pdf">View PDF on GitHub</a> or 
+        <p>For further information, please refer to our report: <a href="https://github.com/nguyen-trinhtk/PII-Robot/blob/main/Results/Report%20Paper.pdf">View on GitHub</a> or 
         <a href="https://github.com/nguyen-trinhtk/PII-Robot/raw/main/Results/Report%20Paper.pdf">Download PDF.</a></p>
         
 </object>
