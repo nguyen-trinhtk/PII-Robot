@@ -17,7 +17,7 @@ The implementation of this robot includes three main stages: designing its mecha
 <h2>Results and discussion</h2>
 <p>We have successfully deployed a robot system capable of navigating, detecting bottles, and avoiding obstacles with a price range of $341 to $400. This result fits the initial scope of this project. However, the Jetson Nano's processing speed and object detection model's rate are still relatively slow; the lidar can be optimized with the implementation of ROS SLAM simulation. In addition, the robot's electronic components are not covered, making them susceptible to damage and malfunction. Future research should focus on resolving these proposed issues.</p>
 
-<p>Images and videos of this robot can be found here: <a href="https://github.com/nguyen-trinhtk/PII-robot/Results/Media">Media</a></p>
+<p>Images and videos of this robot can be found here: <a href="https://github.com/nguyen-trinhtk/PII-robot/Results/Media">Media</a>.</p>
 
 <h2>Report</h2>
 <object data="https://github.com/nguyen-trinhtk/PII-Robot/blob/main/Results/Report%20Paper.pdf" type="application/pdf" width="700px" height="700px">
